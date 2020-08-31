@@ -1,22 +1,16 @@
 import pandas as pd
 import random
 import numpy as np
-'''
-random.seed(5)
-output = [random.randint(-300,300)/100 for i in range(500)]
-col1 = [random.randint(0,600)/100 for i in range(500)]
-col2 = [random.randint(0,600)/100 for i in range(500)]
-
-df = pd.DataFrame({"a":col1,"b":col2,"output":output})
-
-print(df.head())
-
-df.to_csv("data/test.csv",index=False)
-'''
-
 
 class VicImplementation ():
+
     def __init__(self,dataFile,outputName,class_outs=[0,1],n_outs=2,colsToRemove=[]):
+        # dataFile = route to the file to be loaded into a pandas dataFrame in CSV
+        # outputName = the name of the class column
+        # class_outs = the name of the output classes
+        # n_outs = number of csv to generate
+        # colsToRemove = Optional parameter to remove certain cols given their names
+
         self.route = dataFile
         self.n_outs = n_outs
         self.n_classes = len(class_outs)
@@ -30,27 +24,35 @@ class VicImplementation ():
         self.data.drop([outputName], axis=1,inplace=True)
         self.outputName = outputName
 
+    # wrapper function of the dirichlet function
     def makeSplits(self):
+        # n_classes = the number of classe to be mapped
+        # n_outs = the number of csv to generate
         self.splits = np.random.dirichlet(np.ones(self.n_classes), size=self.n_outs)
 
     def makeCategoricalOutput(self):
+        # generate self.splits
         self.makeSplits()
         j=1
+        # for each split in splits
         for split in self.splits:
             partial = 0
             output=[]
             i=0
             for value in split[:-1]:
+                # convert the dirichlet probability into a portion of the number of elements
                 cut = int(value*self.numberOfElements)
+                # convert the cut number into a list of each class in class values
                 output+=[self.class_values[i]]*cut
                 partial+=cut
                 i+=1
+            # the last element is the complement of the sum of the previous elements
             cut = self.numberOfElements - partial
             output += [self.class_values[i]] * cut
-
+            # make the dataframe output
             dataOut = self.data.copy()
             dataOut[self.outputName] = output
-
+            # save it to a csv file
             dataOut.to_csv('data_outputs/split_{}_nc_{}.csv'.format(j,self.n_classes),index=False)
             j+=1
 
