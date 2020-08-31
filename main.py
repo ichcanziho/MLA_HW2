@@ -16,7 +16,7 @@ df.to_csv("data/test.csv",index=False)
 
 
 class VicImplementation ():
-    def __init__(self,dataFile,outputName,class_outs=[0,1],n_outs=2):
+    def __init__(self,dataFile,outputName,class_outs=[0,1],n_outs=2,colsToRemove=[]):
         self.route = dataFile
         self.n_outs = n_outs
         self.n_classes = len(class_outs)
@@ -24,6 +24,9 @@ class VicImplementation ():
         self.data = pd.read_csv(dataFile)
         self.numberOfElements = len(self.data)
         self.data.sort_values(by=[outputName],inplace=True)
+        for col in colsToRemove:
+            self.data.drop([col], axis=1, inplace=True)
+
         self.data.drop([outputName], axis=1,inplace=True)
         self.outputName = outputName
 
@@ -51,7 +54,7 @@ class VicImplementation ():
             dataOut.to_csv('data_outputs/split_{}_nc_{}.csv'.format(j,self.n_classes),index=False)
             j+=1
 
-vic = VicImplementation('data/Data_15s_30r.csv','score_change',class_outs=['a','b','c'],n_outs=1)
+vic = VicImplementation('data/Data_15s_30r.csv','score_change',class_outs=['a','b'],n_outs=2,colsToRemove=['fingerprint','minutia'])
 
 
 vic.makeCategoricalOutput()
