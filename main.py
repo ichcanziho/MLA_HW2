@@ -60,6 +60,7 @@ class VicImplementation ():
         for s in split:
             print(s)
         self.splits = split
+
     def makeCategoricalOutput(self):
         # generate self.splits
         self.makeSplits()
@@ -203,7 +204,7 @@ class VicImplementation ():
 
         plt.show()
 
-vic = VicImplementation('data/Data_15s_30r.csv','score_change',class_outs=[0,1],n_outs=5,colsToRemove=['fingerprint','minutia'])
-vic.setKfolds(3)
-vic.addClassifier(SVC(gamma='auto'))#, RandomForestClassifier())#, GaussianNB(), LinearDiscriminantAnalysis(), MLPClassifier())
+vic = VicImplementation('data/Data_15s_30r.csv','score_change',class_outs=[0,1],n_outs=50,colsToRemove=['fingerprint','minutia'])
+vic.setKfolds(10)
+vic.addClassifier(SVC(gamma='auto'), RandomForestClassifier(), GaussianNB(), LinearDiscriminantAnalysis(), MLPClassifier())
 vic.makeCategoricalOutput()
